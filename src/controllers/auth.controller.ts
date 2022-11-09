@@ -5,18 +5,22 @@ import { User } from "../protocols/User.js";
 import * as authRepository from "../repositories/auth.repositoy.js";
 
 async function signup(req: Request, res: Response) {
-	let { username, picture, password } = req.body as User;
-
-	if (!username || !picture || !password) return res.sendStatus(400);
+	let { username, email, password } = req.body as User;
 
 	const passwordHash: string = bcrypt.hashSync(password, 13);
 
 	password = passwordHash;
 
 	try {
+		const user: User | undefined = await authRepository.findUser(email);
+
+		if (user) {
+			return res.status(409).send({ message: "Usuário já existe." });
+		}
+
 		const insertedUser: number = await authRepository.insertUser({
 			username,
-			picture,
+			email,
 			password,
 		});
 
@@ -33,4 +37,41 @@ async function signup(req: Request, res: Response) {
 	}
 }
 
-export { signup };
+async function signin(req: Request, res: Response) {
+	const { email, password } = req.body as User;
+
+	try {
+		const user: User | undefined = await authRepository.findUser(email);
+
+		user.username = user.username.trim();
+		user.password = user.password.trim();
+
+		if (!user || !bcrypt.compareSync(password, user.password)) {
+			return res.status(401).send({ message: "Email ou senha inválida." });
+		}
+
+		const session: boolean = await authRepository.userHasActiveSession(user.id);
+
+		if (session) {
+			return res.sendStatus(400);
+		}
+
+		const token: string = jwt.sign({ user: user.id }, process.env.JWT_SECRET);
+
+		const insertedSession: number = await authRepository.insertSession(
+			user.id,
+			token
+		);
+
+		if (insertedSession === 0) {
+			return res.status(400).send({ message: "Não foi possível entrar." });
+		}
+
+		res.status(200).send({ token, username: user.username });
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+}
+
+export { signup, signin };
