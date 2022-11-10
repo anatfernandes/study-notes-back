@@ -33,4 +33,24 @@ async function insert(req: Request, res: Response) {
 	}
 }
 
-export { insert };
+async function listAll(req: Request, res: Response) {
+	const user: number = res.locals.user;
+
+	try {
+		let notes: NoteEntity[] = await notesRepository.listAllNotes(user);
+
+		notes = notes.map((note) => ({
+			...note,
+			title: note.title.trim(),
+			text: note.text.trim(),
+            subjectName: note.subjectName.trim()
+		}));
+
+		res.status(200).send(notes);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+}
+
+export { insert, listAll };

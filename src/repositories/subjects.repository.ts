@@ -1,3 +1,4 @@
+import { QueryResult } from "pg";
 import connection from "../database/studynotes.js";
 import { Subject, SubjectEntity } from "../protocols/Subject.js";
 
@@ -72,7 +73,7 @@ async function editSubject({ id, name, user }: SubjectEntity): Promise<number> {
 	).rowCount;
 }
 
-function deleteNotesFromSubject(id: number) {
+function deleteNotesFromSubject(id: number): Promise<QueryResult> {
 	return connection.query(`DELETE FROM notes WHERE subject_id = $1;`, [id]);
 }
 
