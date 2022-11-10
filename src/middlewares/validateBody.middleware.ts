@@ -1,9 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ObjectSchema } from "joi";
 
-type Validation = (req: Request, res: Response, next: NextFunction) => void;
-
-function validateBody<T>(schema: ObjectSchema<T>): Validation {
+function validateBody<T>(schema: ObjectSchema<T>) {
 	return (req: Request, res: Response, next: NextFunction) => {
 		const { body } = req;
 

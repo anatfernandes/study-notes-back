@@ -1,18 +1,18 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { User } from "../protocols/User.js";
+import { NewUser, User, UserEntity } from "../protocols/User.js";
 import * as authRepository from "../repositories/auth.repositoy.js";
 
 async function signup(req: Request, res: Response) {
-	let { username, email, password } = req.body as User;
+	let { username, email, password } = req.body as NewUser;
 
 	const passwordHash: string = bcrypt.hashSync(password, 13);
 
 	password = passwordHash;
 
 	try {
-		const user: User | undefined = await authRepository.findUser(email);
+		const user: UserEntity | undefined = await authRepository.findUser(email);
 
 		if (user) {
 			return res.status(409).send({ message: "Usuário já existe." });
@@ -41,14 +41,14 @@ async function signin(req: Request, res: Response) {
 	const { email, password } = req.body as User;
 
 	try {
-		const user: User | undefined = await authRepository.findUser(email);
+		const user: UserEntity | undefined = await authRepository.findUser(email);
+
+		if (!user || !bcrypt.compareSync(password, user.password.trim())) {
+			return res.status(401).send({ message: "Email ou senha inválida." });
+		}
 
 		user.username = user.username.trim();
 		user.password = user.password.trim();
-
-		if (!user || !bcrypt.compareSync(password, user.password)) {
-			return res.status(401).send({ message: "Email ou senha inválida." });
-		}
 
 		const session: boolean = await authRepository.userHasActiveSession(user.id);
 
@@ -74,4 +74,21 @@ async function signin(req: Request, res: Response) {
 	}
 }
 
-export { signup, signin };
+async function logout(req: Request, res: Response) {
+	const { token } = res.locals;
+
+	try {
+		const deletedSession: number = await authRepository.deleteSession(token);
+
+		if (deletedSession === 0) {
+			return res.status(400).send({ message: "Não foi possível sair." });
+		}
+
+		res.sendStatus(204);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+}
+
+export { signup, signin, logout };
