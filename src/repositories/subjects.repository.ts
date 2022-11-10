@@ -30,7 +30,7 @@ async function findSubjectById(id: number): Promise<SubjectEntity> {
 	return (
 		await connection.query(
 			`SELECT
-				id, name
+				id, name, user_id AS user
             FROM subjects
             WHERE id = $1;`,
 			[id]
@@ -54,7 +54,7 @@ async function listAllSubjects(user: number): Promise<SubjectEntity[]> {
 	)?.rows;
 }
 
-async function edit({ id, name, user }: SubjectEntity): Promise<number> {
+async function editSubject({ id, name, user }: SubjectEntity): Promise<number> {
 	return (
 		await connection.query(
 			`UPDATE subjects
@@ -68,4 +68,22 @@ async function edit({ id, name, user }: SubjectEntity): Promise<number> {
 	).rowCount;
 }
 
-export { insertSubject, findSubject, listAllSubjects, edit, findSubjectById };
+function deleteNotesFromSubject(id: number) {
+	return connection.query(`DELETE FROM notes WHERE subject_id = $1;`, [id]);
+}
+
+async function deleteSubject(id: number): Promise<number> {
+	await deleteNotesFromSubject(id);
+
+	return (await connection.query(`DELETE FROM subjects WHERE id = $1;`, [id]))
+		.rowCount;
+}
+
+export {
+	insertSubject,
+	findSubject,
+	listAllSubjects,
+	editSubject,
+	findSubjectById,
+	deleteSubject,
+};

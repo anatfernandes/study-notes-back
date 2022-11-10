@@ -64,7 +64,7 @@ async function edit(req: Request, res: Response) {
 	const { name } = req.body as Subject;
 	const id: number | null = Number(req.params.id) || null;
 
-    if (!id || id < 1) return res.sendStatus(400);
+	if (!id || id < 1) return res.sendStatus(400);
 
 	if (!name || typeof name !== "string") {
 		return res.status(400).send({ message: "O nome do tópico é inválido." });
@@ -88,7 +88,7 @@ async function edit(req: Request, res: Response) {
 			return res.status(409).send({ message: "Esse tópico já existe." });
 		}
 
-		const editedSubject: number = await subjectsRepository.edit({
+		const editedSubject: number = await subjectsRepository.editSubject({
 			user,
 			name,
 			id,
@@ -107,4 +107,37 @@ async function edit(req: Request, res: Response) {
 	}
 }
 
-export { insert, listAll, edit };
+async function deleteSubject(req: Request, res: Response) {
+	const user: number = res.locals.user;
+	const id: number | null = Number(req.params.id) || null;
+
+	if (!id || id < 1) return res.sendStatus(400);
+
+	try {
+		const subject: SubjectEntity | undefined =
+			await subjectsRepository.findSubjectById(id);
+
+		if (!subject) {
+			return res.status(404).send({ message: "Tópico não encontrado." });
+		}
+
+		if (user !== subject.user) {
+			return res.sendStatus(401);
+		}
+
+		const editedSubject: number = await subjectsRepository.deleteSubject(id);
+
+		if (editedSubject === 0) {
+			return res
+				.status(400)
+				.send({ message: "Não foi possível apagar tópico." });
+		}
+
+		res.sendStatus(204);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+}
+
+export { insert, listAll, edit, deleteSubject };
