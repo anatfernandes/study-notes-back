@@ -99,4 +99,30 @@ async function edit(req: Request, res: Response) {
 	}
 }
 
-export { insert, listAll, listAllFromSubject, edit };
+async function deleteNote(req: Request, res: Response) {
+	const user: number = Number(res.locals.user);
+	const id: number = Number(req.params.id);
+
+	if (isNaN(id) || id < 1) return res.sendStatus(400);
+
+	try {
+		const hasNote: boolean = await notesRepository.hasNote(id, user);
+
+		if (!hasNote) return res.sendStatus(404);
+
+		const deletedNote: number = await notesRepository.deleteNote(id);
+
+		if (deletedNote === 0) {
+			return res
+				.status(400)
+				.send({ message: "Não foi possível apagar anotação." });
+		}
+
+		res.sendStatus(204);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+}
+
+export { insert, listAll, listAllFromSubject, edit, deleteNote };

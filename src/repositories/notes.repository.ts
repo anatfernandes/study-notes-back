@@ -96,4 +96,16 @@ async function editNote(
 	).rowCount;
 }
 
-export { insertNote, listAllNotes, listAllNotesFromSubject, hasNote, editNote };
+async function deleteNote(id: number): Promise<number> {
+	return (await connection.query(`DELETE FROM notes WHERE id = $1;`, [id]))
+		.rowCount;
+}
+
+export {
+	insertNote,
+	listAllNotes,
+	listAllNotesFromSubject,
+	hasNote,
+	editNote,
+	deleteNote,
+};

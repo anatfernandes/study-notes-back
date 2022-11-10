@@ -3,6 +3,7 @@ import { validateBody } from "../middlewares/validateBody.middleware.js";
 import { validateSubject } from "../middlewares/validateSubject.js";
 import { noteBody } from "../schemas/note.schema.js";
 import {
+	deleteNote,
 	edit,
 	insert,
 	listAll,
@@ -21,5 +22,6 @@ router.get(
 );
 
 router.put("/notes/:id", validateBody(noteBody), validateSubject("body"), edit);
+router.delete("/notes/:id", deleteNote);
 
 export default router;
