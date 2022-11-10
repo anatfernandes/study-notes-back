@@ -39,4 +39,24 @@ async function insert(req: Request, res: Response) {
 	}
 }
 
-export { insert };
+async function listAll(req: Request, res: Response) {
+	const user: number = res.locals.user;
+
+	try {
+		let subjects: SubjectEntity[] = await subjectsRepository.listAllSubjects(
+			user
+		);
+
+		subjects = subjects.map((subject) => ({
+			...subject,
+			name: subject.name.trim(),
+		}));
+
+		res.status(200).send(subjects);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+}
+
+export { insert, listAll };

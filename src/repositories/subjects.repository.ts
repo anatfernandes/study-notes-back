@@ -26,4 +26,19 @@ async function findSubject({ name, user }: Subject): Promise<SubjectEntity> {
 	)?.rows[0];
 }
 
-export { insertSubject, findSubject };
+async function listAllSubjects(user: number): Promise<SubjectEntity[]> {
+	return (
+		await connection.query(
+			`SELECT
+				id,
+                name,
+                created_at AS "createdAt",
+                edited_at AS "editedAt"
+            FROM subjects
+            WHERE user_id = $1;`,
+			[user]
+		)
+	)?.rows;
+}
+
+export { insertSubject, findSubject, listAllSubjects };
