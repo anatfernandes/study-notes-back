@@ -67,4 +67,36 @@ async function listAllFromSubject(req: Request, res: Response) {
 	}
 }
 
-export { insert, listAll, listAllFromSubject };
+async function edit(req: Request, res: Response) {
+	const user: number = Number(res.locals.user);
+	const id: number = Number(req.params.id);
+	const { title, text, subjectId } = req.body as NewNote;
+
+	if (isNaN(id) || id < 1) return res.sendStatus(400);
+
+	try {
+		const hasNote: boolean = await notesRepository.hasNote(id, user);
+
+		if (!hasNote) {
+			return res.status(404).send({ message: "Anotação inexistente." });
+		}
+
+		const editedNode: number = await notesRepository.editNote(
+			{ title, text, subjectId },
+			id
+		);
+
+		if (editedNode === 0) {
+			return res
+				.status(400)
+				.send({ message: "Não foi possível editar anotação." });
+		}
+
+		res.sendStatus(204);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+}
+
+export { insert, listAll, listAllFromSubject, edit };

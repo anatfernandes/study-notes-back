@@ -38,7 +38,10 @@ async function listAllNotes(user: number): Promise<NoteEntity[]> {
 	)?.rows;
 }
 
-async function listAllNotesFromSubject(user: number, id:number): Promise<NoteEntity[]> {
+async function listAllNotesFromSubject(
+	user: number,
+	id: number
+): Promise<NoteEntity[]> {
 	return (
 		await connection.query(
 			`SELECT
@@ -60,4 +63,37 @@ async function listAllNotesFromSubject(user: number, id:number): Promise<NoteEnt
 	)?.rows;
 }
 
-export { insertNote, listAllNotes, listAllNotesFromSubject };
+async function hasNote(id: number, user: number): Promise<boolean> {
+	return !!(
+		await connection.query(
+			`SELECT
+				*
+            FROM notes
+            JOIN subjects
+                ON notes.subject_id = subjects.id
+            WHERE notes.id = $1
+                AND subjects.user_id = $2;`,
+			[id, user]
+		)
+	)?.rowCount;
+}
+
+async function editNote(
+	{ title, text, subjectId }: NewNote,
+	id: number
+): Promise<number> {
+	return (
+		await connection.query(
+			`UPDATE notes
+            SET
+                title = $1,
+                text = $2,
+                subject_id = $3,
+                edited_at = $4
+            WHERE id = $5;`,
+			[title, text, subjectId, new Date(), id]
+		)
+	).rowCount;
+}
+
+export { insertNote, listAllNotes, listAllNotesFromSubject, hasNote, editNote };
