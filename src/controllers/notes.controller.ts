@@ -1,21 +1,11 @@
 import { Request, Response } from "express";
 import { NewNote, NoteEntity } from "../protocols/Note.js";
-import { SubjectEntity } from "../protocols/Subject.js";
 import * as notesRepository from "../repositories/notes.repository.js";
-import * as subjectsRepository from "../repositories/subjects.repository.js";
 
 async function insert(req: Request, res: Response) {
-	const user: number = res.locals.user;
 	const { title, text, subjectId } = req.body as NewNote;
 
 	try {
-		const subject: SubjectEntity | undefined =
-			await subjectsRepository.findSubjectById(subjectId, user);
-
-		if (!subject) {
-			return res.status(404).send({ message: "Tópico não encontrado." });
-		}
-
 		const insertedNote: number = await notesRepository.insertNote({
 			title,
 			text,
@@ -43,7 +33,7 @@ async function listAll(req: Request, res: Response) {
 			...note,
 			title: note.title.trim(),
 			text: note.text.trim(),
-            subjectName: note.subjectName.trim()
+			subjectName: note.subjectName.trim(),
 		}));
 
 		res.status(200).send(notes);
@@ -53,4 +43,28 @@ async function listAll(req: Request, res: Response) {
 	}
 }
 
-export { insert, listAll };
+async function listAllFromSubject(req: Request, res: Response) {
+	const user: number = res.locals.user;
+	const id: number = Number(res.locals.subjectId);
+
+	try {
+		let notes: NoteEntity[] = await notesRepository.listAllNotesFromSubject(
+			user,
+			id
+		);
+
+		notes = notes.map((note) => ({
+			...note,
+			title: note.title.trim(),
+			text: note.text.trim(),
+			subjectName: note.subjectName.trim(),
+		}));
+
+		res.status(200).send(notes);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+}
+
+export { insert, listAll, listAllFromSubject };

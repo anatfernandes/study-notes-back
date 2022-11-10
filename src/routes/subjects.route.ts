@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { validateSubject } from "../middlewares/validateSubject.js";
 import {
 	insert,
 	listAll,
@@ -10,7 +11,7 @@ const router: Router = Router();
 
 router.post("/subjects", insert);
 router.get("/subjects", listAll);
-router.put("/subjects/:id", edit);
-router.delete("/subjects/:id", deleteSubject);
+router.put("/subjects/:id", validateSubject("params"), edit);
+router.delete("/subjects/:id", validateSubject("params"), deleteSubject);
 
 export default router;
