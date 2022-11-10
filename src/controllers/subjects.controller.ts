@@ -72,7 +72,7 @@ async function edit(req: Request, res: Response) {
 
 	try {
 		const hasSubject: SubjectEntity | undefined =
-			await subjectsRepository.findSubjectById(id);
+			await subjectsRepository.findSubjectById(id, user);
 
 		if (!hasSubject) {
 			return res.status(404).send({ message: "Tópico não encontrado." });
@@ -115,7 +115,7 @@ async function deleteSubject(req: Request, res: Response) {
 
 	try {
 		const subject: SubjectEntity | undefined =
-			await subjectsRepository.findSubjectById(id);
+			await subjectsRepository.findSubjectById(id, user);
 
 		if (!subject) {
 			return res.status(404).send({ message: "Tópico não encontrado." });

@@ -26,14 +26,18 @@ async function findSubject({ name, user }: Subject): Promise<SubjectEntity> {
 	)?.rows[0];
 }
 
-async function findSubjectById(id: number): Promise<SubjectEntity> {
+async function findSubjectById(
+	id: number,
+	user: number
+): Promise<SubjectEntity> {
 	return (
 		await connection.query(
 			`SELECT
 				id, name, user_id AS user
             FROM subjects
-            WHERE id = $1;`,
-			[id]
+            WHERE id = $1
+                AND user_id = $2;`,
+			[id, user]
 		)
 	)?.rows[0];
 }
