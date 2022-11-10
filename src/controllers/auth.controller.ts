@@ -75,7 +75,7 @@ async function signin(req: Request, res: Response) {
 }
 
 async function logout(req: Request, res: Response) {
-	const { token } = res.locals;
+	const token: string = res.locals.token;
 
 	try {
 		const deletedSession: number = await authRepository.deleteSession(token);
