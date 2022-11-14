@@ -15,8 +15,7 @@ async function validateSession(
 	try {
 		jwt.verify(token, process.env.JWT_SECRET);
 	} catch (error) {
-		console.error(error);
-		res.sendStatus(401);
+		return res.sendStatus(401);
 	}
 
 	try {
@@ -33,7 +32,7 @@ async function validateSession(
 		next();
 	} catch (error) {
 		console.error(error);
-		res.sendStatus(500);
+		return res.sendStatus(500);
 	}
 }
 

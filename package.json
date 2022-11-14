@@ -2,11 +2,12 @@
 	"name": "projeto18-studynotes-back",
 	"version": "1.0.0",
 	"description": "",
-	"main": "src/server.js",
+	"main": "dist/server.js",
 	"type": "module",
 	"scripts": {
-		"start": "npx ts-node src/server.ts",
-		"dev": "nodemon src/server.ts"
+		"start": "node dist/server.js",
+		"dev": "nodemon src/server.ts",
+		"postinstall": "tsc"
 	},
 	"repository": {
 		"type": "git",
