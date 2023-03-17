@@ -21,7 +21,9 @@
 - [Como rodar em desenvolvimento](#Como-rodar-em-desenvolvimento)
 
 # Sobre
-Study notes é uma api em que você consegue armazenar suas anotações de estudo classificando-as por tópicos.
+Study notes é uma api contruída para armazenar suas anotações de estudo classificando-as por tópicos.
+<br />
+**Nota:** esse projeto é uma PoC de Typescript.
 
 # Rotas
 URL base: https://study-notes-api.herokuapp.com
@@ -231,12 +233,12 @@ URL base: https://study-notes-api.herokuapp.com
 
 1. Clone esse repositório:
 >```bash
->$ git clone https://github.com/AnaLTFernandes/study-notes-back.git
+> git clone https://github.com/AnaLTFernandes/study-notes-back.git
 >```
 
 2. Instale as dependências:
 >```bash
->$ npm install
+> npm install
 >```
 
 3. Crie um banco de dados PostgreSQL com o nome que desejar
@@ -244,14 +246,14 @@ URL base: https://study-notes-api.herokuapp.com
 4. Rode o comando na raiz do projeto para criar as tabelas:
 >```bash
 >#troque nome_do_banco pelo nome do banco de dados criado no passo anterior
->$ sudo su -c "psql -d nome_do_banco -f dump.sql" postgres
+> sudo su -c "psql -d nome_do_banco -f dump.sql" postgres
 >```
 
 5. Configure o arquivo `.env` usando como base o arquivo `.env.example`
 
 6. Inicie o projeto:
 >```bash
->$ npm run dev
+> npm run dev
 >```
 
 7. Divirta-se nas rotas trocando a URL base para: http://localhost:porta_definida_no_.env
