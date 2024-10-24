@@ -1,5 +1,7 @@
 # :memo: Study notes backend
 
+![Badge Finalizado](https://img.shields.io/static/v1?label=STATUS&message=FINALIZADO&color=success&style=for-the-badge)
+
 # Índice
 
 - [Sobre](#Sobre)
@@ -26,7 +28,6 @@ Study notes é uma api contruída para armazenar suas anotações de estudo clas
 **Nota:** esse projeto é uma PoC de Typescript.
 
 # Rotas
-URL base: https://study-notes-api.herokuapp.com
 
 ## Rotas não autenticadas
 
@@ -233,7 +234,7 @@ URL base: https://study-notes-api.herokuapp.com
 
 1. Clone esse repositório:
 >```bash
-> git clone https://github.com/AnaLTFernandes/study-notes-back.git
+> git clone https://github.com/anatfernandes/study-notes-back.git
 >```
 
 2. Instale as dependências:
@@ -256,4 +257,4 @@ URL base: https://study-notes-api.herokuapp.com
 > npm run dev
 >```
 
-7. Divirta-se nas rotas trocando a URL base para: http://localhost:porta_definida_no_.env
+7. Divirta-se nas rotas trocando a URL base para: http://localhost:porta_definida_no_env
